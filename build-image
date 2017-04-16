@@ -1,0 +1,72 @@
+#!/bin/bash
+# -----------------------------------------------------------------------------
+# Copyright [2017] [Kris Nova] kris@nivenly.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# -----------------------------------------------------------------------------
+#
+# build-image is an idempotent script that can be used to turn a vanilla
+# FreeBSD 11 image into an image that is tweaked to run Docker and Kubernetes
+# out of the box. By design this script can be run at any point on a FreeBSD 11
+# system and as long as not conflicts are detected, will provision the machine.
+#
+#
+# Tested on FreeBSD 11.0 in Amazon Web Services  US-WEST-2
+# FreeBSD 11.0-STABLE-amd64-2016-10-22 - ami-028c2862
+# FreeBSD 11.0-STABLE-amd64
+#
+# -----------------------------------------------------------------------------
+
+
+INSTALL_ADMIN_PKGS=1
+
+# Install administrative packages
+if [ "$INSTALL_ADMIN_PKGS" -eq "1" ]; then
+    echo "Installing administrative packages.."
+    pkg install -y bash
+    mount -t fdescfs fdescfs /dev/fd
+    pkg install -y emacs25
+    pkg install -y git
+    pkg install -y sudo
+    sudo echo "fdescfs  /dev/fd     fdescfs     rw,late 0   0" >> /etc/fstab
+fi
+
+# Install Docker
+if hash docker 2>/dev/null; then
+    echo "Installing Docker.."
+    kldload zfs
+    dd if=/dev/zero of=/usr/local/dockerfs bs=1024K count=4000
+    zpool create -f zroot /usr/local/dockerfs
+    zfs create -o mountpoint=/var/lib/docker zroot/docker
+    pkg install -y docker-freebsd ca_root_nss
+    sysrc -f /etc/rc.conf docker_enable="YES"
+    zfs mount -a
+    echo "zfs mount -a" >> /usr/local/etc/rc.d/docker
+    service docker start
+    service docker status
+fi
+
+# Install cloud-init thanks to https://github.com/number5/cloud-init and Ubuntu
+if hash cloud-init 2>/dev/null; then
+    echo "Installing cloud-init.."
+    cd ~
+    git clone https://github.com/number5/cloud-init.git
+    cd cloud-init
+
+    # Pending PR: https://github.com/number5/cloud-init/pull/14 we are using my fork
+    # but the credit goes to number5 and their original script.
+    # fetch https://raw.githubusercontent.com/number5/cloud-init/master/tools/build-on-freebsd
+    fetch https://raw.githubusercontent.com/kris-nova/cloud-init/patch-1/tools/build-on-freebsd
+    sh build-on-free-bsd
+fi
