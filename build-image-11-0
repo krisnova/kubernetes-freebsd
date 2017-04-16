@@ -57,7 +57,7 @@ if hash docker 2>/dev/null; then
     service docker status
 fi
 
-# Install cloud-init thanks to https://github.com/number5/cloud-init and Ubuntu
+# Install cloud-init thanks to https://github.com/number5/cloud-init and Ubuntu <3 <#
 if hash cloud-init 2>/dev/null; then
     echo "Installing cloud-init.."
     cd ~

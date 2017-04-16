@@ -1,0 +1,72 @@
+{
+  "DryRun": false,
+  "ImageId": "ami-028c2862",
+  "MinCount": 0,
+  "MaxCount": 0,
+  "KeyName": "",
+  "SecurityGroups": [
+    "kubernetes-freebsd-ami-create"
+  ],
+  "SecurityGroupIds": [
+    "${SGID}"
+  ],
+  "UserData": "",
+  "InstanceType": "",
+  "Placement": {
+    "AvailabilityZone": "",
+    "GroupName": "",
+    "Tenancy": ""
+  },
+  "KernelId": "",
+  "RamdiskId": "",
+  "BlockDeviceMappings": [
+    {
+      "VirtualName": "",
+      "DeviceName": "",
+      "Ebs": {
+        "SnapshotId": "",
+        "VolumeSize": 0,
+        "DeleteOnTermination": true,
+        "VolumeType": "",
+        "Iops": 0,
+        "Encrypted": true
+      },
+      "NoDevice": ""
+    }
+  ],
+  "Monitoring": {
+    "Enabled": true
+  },
+  "SubnetId": "",
+  "DisableApiTermination": true,
+  "InstanceInitiatedShutdownBehavior": "",
+  "PrivateIpAddress": "",
+  "ClientToken": "",
+  "AdditionalInfo": "",
+  "NetworkInterfaces": [
+    {
+      "NetworkInterfaceId": "",
+      "DeviceIndex": 0,
+      "SubnetId": "",
+      "Description": "",
+      "PrivateIpAddress": "",
+      "Groups": [
+        ""
+      ],
+      "DeleteOnTermination": true,
+      "PrivateIpAddresses": [
+        {
+          "PrivateIpAddress": "",
+          "Primary": true
+        }
+      ],
+      "SecondaryPrivateIpAddressCount": 0,
+      "AssociatePublicIpAddress": true
+    }
+  ],
+  "IamInstanceProfile": {
+    "Arn": "",
+    "Name": ""
+  },
+  "EbsOptimized": true
+}

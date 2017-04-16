@@ -1,0 +1,35 @@
+#!/bin/bash
+
+IP=$(curl -s ifconfig.me)
+REGION="us-west-2"
+ 
+# Create a security group
+SGID=$(aws ec2 create-security-group \
+         --group-name "kubernetes-freebsd-ami-create" \
+         --description "Security group for creating a FreeBSD AMI" \
+         --region $REGION)
+
+ 
+# SSH access
+aws ec2 authorize-security-group-ingress \
+  --group-name "kubernetes-freebsd-ami-create" \
+  --protocol tcp \
+  --port 22 \
+  --cidr $IP/32 \
+  --region $REGION
+
+
+sed -i -e 's/<<SG>>/${SGID}/g' aws-ami.json
+O=$(aws ec2 run-instances --cli-input-json file://aws-ami.json)
+echo $O
+
+# Kris TODO parse the CNAME out of the AWS API and run the following command
+# ssh -i ~/.ssh/id_rsa ec2-user@${CNAME} cd ~ && fetch https://github.com/kris-nova/kubernetes-freebsd/blob/master/build-image && sh build-image
+
+# Kris TODO create an AMI from the instance
+
+# Kris TODO delete the instance
+
+# Kris TODO delete the security group
+
+# Kris TODO Profit
