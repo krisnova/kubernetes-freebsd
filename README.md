@@ -1,4 +1,5 @@
-# Kubernetes and Beastie
+# Experimental and Work In Progress
+### Kubernetes and FreeBSD 11.0
 
 Notes, Documentation, and Convenience scripts for running Kubernetes on FreeBSD
 
